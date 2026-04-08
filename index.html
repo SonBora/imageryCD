@@ -27,7 +27,7 @@
             border: 1px solid #ccc;
         }
 
-        /* HEADER SECTION - Row layout for Logo and Text alignment */
+        /* HEADER SECTION */
         .header-section {
             margin-top: 10mm;
             z-index: 10;
@@ -174,8 +174,9 @@
     
     <div class="input-group">
         <input type="text" id="name" placeholder="PATIENT FULL NAME" oninput="updateDetails()">
-        <input type="text" id="patientID" placeholder="PATIENT ID" oninput="updateDetails()">
+        
         <input type="text" id="age" placeholder="AGE/GENDER" oninput="updateDetails()">
+        <input type="text" id="patientID" placeholder="PATIENT ID" oninput="updateDetails()">
     </div>
 
     <div class="input-group">
@@ -185,6 +186,7 @@
             <option value="MAMMOGRAPHY">MAMMOGRAPHY</option>
         </select>
         <input type="text" id="part" placeholder="PART (e.g. BRAIN)" oninput="updateDetails()">
+        <input type="date" id="inputDate" oninput="updateDetails()">
     </div>
 
     <div style="margin-top: 15px;">
@@ -218,7 +220,8 @@
                 ID: <span id="showID">__________</span><br>
                 
                 <span id="showScanType" style="color: #d9534f; font-size: 13px;">CT SCAN</span><br>
-                PART: <span id="showPart">__________</span>
+                PART: <span id="showPart">__________</span><br>
+                DATE: <span id="showDate">__________</span>
             </div>
         </div>
 
@@ -227,19 +230,43 @@
         </div>
     </div>
     
-    <div style="position: absolute; bottom: 12mm; font-size: 8px; color: #999; width: 100%; text-align: center; letter-spacing: 1px; font-weight: bold;">
-    អាស័យដ្ឋាន ផ្លូវលេខ១០៩ ភូមិព្រៃសខាងកើត ព្រៃស ដង្កោរ ភ្នំពេញ
+    <div style="position: absolute; bottom: 18mm; font-size: 8px; color: #999; width: 100%; text-align: center; letter-spacing: 0.5px; font-weight: bold;">
+    អាស័យដ្ឋាន​ ផ្លូវលេខ១០៩ ភូមិព្រៃសខាងកើត សង្កាត់ព្រៃស ខណ្ឌដង្កោរ រាជធានីភ្នំពេញ
     </div>
 </div>
 
 <script>
-    // Updates the label in real-time as user types
+    window.onload = function() {
+        const today = new Date();
+        const yyyy = today.getFullYear();
+        let mm = today.getMonth() + 1; 
+        let dd = today.getDate();
+        if (dd < 10) dd = '0' + dd;
+        if (mm < 10) mm = '0' + mm;
+        document.getElementById('inputDate').value = yyyy + '-' + mm + '-' + dd;
+        updateDetails();
+    };
+
     function updateDetails() {
         document.getElementById("showName").innerText = document.getElementById("name").value.toUpperCase() || "__________";
         document.getElementById("showID").innerText = document.getElementById("patientID").value.toUpperCase() || "__________";
         document.getElementById("showAge").innerText = document.getElementById("age").value.toUpperCase() || "__________";
         document.getElementById("showPart").innerText = document.getElementById("part").value.toUpperCase() || "__________";
         
+        const dateInput = document.getElementById("inputDate").value;
+        if (dateInput) {
+            const dateObj = new Date(dateInput);
+            const monthNames = ["January", "February", "March", "April", "May", "June",
+                "July", "August", "September", "October", "November", "December"
+            ];
+            const month = monthNames[dateObj.getMonth()];
+            const day = String(dateObj.getDate()).padStart(2, '0');
+            const year = dateObj.getFullYear();
+            document.getElementById("showDate").innerText = `${month}-${day}-${year}`;
+        } else {
+            document.getElementById("showDate").innerText = "__________";
+        }
+
         const selectedScan = document.getElementById("scanType").value;
         document.getElementById("showScanType").innerText = selectedScan;
 
@@ -253,7 +280,6 @@
         }
     }
 
-    // Clears all inputs and resets the display labels
     function newPatient() {
         if(confirm("Are you sure you want to clear all data?")) {
             document.getElementById("name").value = "";
@@ -261,7 +287,6 @@
             document.getElementById("age").value = "";
             document.getElementById("part").value = "";
             document.getElementById("scanType").selectedIndex = 0;
-            
             updateDetails();
         }
     }
