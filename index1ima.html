@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Professional Medical Disc Label</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: #f0f0f0;
+            margin: 0;
+            padding: 20px;
+            text-align: center;
+        }
+
+        /* Standard CD/DVD dimensions: 120mm x 120mm */
+        #disc-surface {
+            width: 120mm;
+            height: 120mm;
+            margin: 20px auto;
+            background: #fff;
+            border-radius: 50%;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            border: 1px solid #ccc;
+        }
+
+        /* HEADER SECTION - Row layout for Logo and Text alignment */
+        .header-section {
+            margin-top: 10mm;
+            z-index: 10;
+            width: 85%; 
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: center;
+            gap: 4mm;
+        }
+
+        .logo-container {
+            height: 18mm; 
+            width: 18mm;  
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .logo-container img {
+            max-height: 100%;
+            max-width: 100%;
+            object-fit: contain;
+        }
+
+        .hospital-titles {
+            text-align: left;
+            color: #1a4a72;
+            border-left: 1.5px solid #1a4a72;
+            padding-left: 3mm;
+        }
+
+        .khmer-name {
+            font-family: 'Khmer OS Muol Light', 'Segoe UI', serif;
+            font-size: 14px;
+            font-weight: bold;
+            display: block;
+            margin-bottom: 2px;
+        }
+
+        .english-name {
+            font-size: 11px;
+            font-weight: bold;
+            display: block;
+            letter-spacing: 0.5px;
+        }
+
+        .center-hole {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 15mm;
+            height: 15mm;
+            border: 1px dashed #bbb;
+            border-radius: 50%;
+            z-index: 5;
+            background: #fff;
+        }
+
+        .main-container {
+            display: flex;
+            width: 100%; 
+            margin-top: 4mm;
+            z-index: 10;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .patient-info {
+            width: 45%;
+            text-align: left;
+            padding-left: 10mm; 
+            color: #222;
+        }
+
+        .patient-data {
+            font-size: 11px;
+            font-weight: bold;
+            line-height: 1.8;
+        }
+
+        .machine-display {
+            width: 48%; 
+            margin-right: 8mm;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .machine-display img {
+            width: 38mm;
+            height: 33mm;
+            object-fit: contain;
+        }
+
+        /* UI Controls Styling */
+        .no-print {
+            background: #fff;
+            padding: 20px;
+            border-radius: 12px;
+            max-width: 800px;
+            margin: 0 auto 20px auto;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        .input-group { margin-bottom: 10px; }
+
+        input, select { 
+            padding: 10px; 
+            margin: 5px; 
+            width: 200px; 
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        button { 
+            padding: 12px 30px; 
+            cursor: pointer; 
+            font-weight: bold; 
+            border-radius: 5px;
+            border: none;
+            margin: 5px;
+            transition: opacity 0.2s;
+        }
+
+        button:active { opacity: 0.8; }
+
+        .btn-print { background: #28a745; color: white; }
+        .btn-new { background: #dc3545; color: white; }
+
+        @media print {
+            .no-print { display: none; }
+            body { background: white; padding: 0; }
+            #disc-surface { margin: 0; border: none; box-shadow: none; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="no-print">
+    <h1>Medical Disc Label Generator</h1>
+    
+    <div class="input-group">
+        <input type="text" id="name" placeholder="PATIENT FULL NAME" oninput="updateDetails()">
+        <input type="text" id="patientID" placeholder="PATIENT ID" oninput="updateDetails()">
+        <input type="text" id="age" placeholder="AGE/GENDER" oninput="updateDetails()">
+    </div>
+
+    <div class="input-group">
+        <select id="scanType" onchange="updateDetails()">
+            <option value="CT SCAN">CT SCAN</option>
+            <option value="MRI SCAN">MRI SCAN</option>
+            <option value="MAMMOGRAPHY">MAMMOGRAPHY</option>
+        </select>
+        <input type="text" id="part" placeholder="PART (e.g. BRAIN)" oninput="updateDetails()">
+    </div>
+
+    <div style="margin-top: 15px;">
+        <button class="btn-print" onclick="window.print()">Print Disc Label</button>
+        <button class="btn-new" onclick="newPatient()">New Patient</button>
+    </div>
+</div>
+
+<div id="disc-surface">
+    <div class="header-section">
+        <div class="logo-container">
+            <img id="logo-preview" src="logo.jpg" alt="Logo">
+        </div>
+        <div class="hospital-titles">
+            <span class="khmer-name">មន្ទីពេទ្យហ្លួងម៉ែ</span>
+            <span class="english-name">LOANG ME HOSPITAL</span>
+        </div>
+    </div>
+
+    <div class="center-hole"></div>
+
+    <div class="main-container">
+        <div class="patient-info">
+            <h2 style="font-family: 'Khmer OS Muol Light', serif; color: #d9534f; font-size: 14px; margin: 2px 0; border-bottom: 1.5px solid #d9534f; display: block; padding-bottom: 3px; margin-bottom: 8px;">
+                ផ្នែករូបភាពវេជ្ជសាស្រ្ត
+            </h2>
+            
+            <div class="patient-data">
+                NAME: <span id="showName">__________</span><br>
+                DETAILS: <span id="showAge">__________</span><br>
+                ID: <span id="showID">__________</span><br>
+                
+                <span id="showScanType" style="color: #d9534f; font-size: 13px;">CT SCAN</span><br>
+                PART: <span id="showPart">__________</span>
+            </div>
+        </div>
+
+        <div class="machine-display">
+            <img id="machine-preview" src="ct.jpg" alt="Machine">
+        </div>
+    </div>
+    
+    <div style="position: absolute; bottom: 12mm; font-size: 8px; color: #999; width: 100%; text-align: center; letter-spacing: 1px; font-weight: bold;">
+    អាស័យដ្ឋាន ផ្លូវលេខ១០៩ ភូមិព្រៃសខាងកើត ព្រៃស ដង្កោរ ភ្នំពេញ
+    </div>
+</div>
+
+<script>
+    // Updates the label in real-time as user types
+    function updateDetails() {
+        document.getElementById("showName").innerText = document.getElementById("name").value.toUpperCase() || "__________";
+        document.getElementById("showID").innerText = document.getElementById("patientID").value.toUpperCase() || "__________";
+        document.getElementById("showAge").innerText = document.getElementById("age").value.toUpperCase() || "__________";
+        document.getElementById("showPart").innerText = document.getElementById("part").value.toUpperCase() || "__________";
+        
+        const selectedScan = document.getElementById("scanType").value;
+        document.getElementById("showScanType").innerText = selectedScan;
+
+        const imgElement = document.getElementById("machine-preview");
+        if (selectedScan === "CT SCAN") {
+            imgElement.src = "ct.jpg";
+        } else if (selectedScan === "MRI SCAN") {
+            imgElement.src = "mri.jpg";
+        } else if (selectedScan === "MAMMOGRAPHY") {
+            imgElement.src = "mammo.jpg";
+        }
+    }
+
+    // Clears all inputs and resets the display labels
+    function newPatient() {
+        if(confirm("Are you sure you want to clear all data?")) {
+            document.getElementById("name").value = "";
+            document.getElementById("patientID").value = "";
+            document.getElementById("age").value = "";
+            document.getElementById("part").value = "";
+            document.getElementById("scanType").selectedIndex = 0;
+            
+            updateDetails();
+        }
+    }
+</script>
+
+</body>
+</html>
